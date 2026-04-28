@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berry Desktop</title>
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-background"></div>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="cpu" class="logo-icon"></i>
+                <h2>Berry</h2>
+            </div>
+            <div class="nav-items">
+                <button id="newChatBtn" class="nav-btn active">
+                    <i data-lucide="message-square-plus"></i> New Chat
+                </button>
+                <button id="clearChatBtn" class="nav-btn">
+                    <i data-lucide="trash-2"></i> Clear Chat
+                </button>
+            </div>
+            <div class="sidebar-footer">
+                <button id="exportChatBtn" class="settings-btn">
+                    <i data-lucide="download"></i> Export Chat
+                </button>
+                <button class="settings-btn" id="openSettings">
+                    <i data-lucide="settings"></i> Settings
+                </button>
+            </div>
+        </aside>
+        
+        <main class="chat-area">
+            <div class="header-glass" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Berry AI Assistant</h3>
+                <button class="icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Mode" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;">
+                    <i data-lucide="sun"></i>
+                </button>
+            </div>
+            <div id="messages" class="messages-container">
+                <div class="message assistant">
+                    <div class="avatar"><i data-lucide="bot"></i></div>
+                    <div class="content">Welcome to Berry! How can I assist you today?</div>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Message Berry..." rows="1"></textarea>
+                    <button id="micBtn" class="action-btn" title="Speak">
+                        <i data-lucide="mic"></i>
+                    </button>
+                    <button id="sendBtn" class="action-btn send" title="Send">
+                        <i data-lucide="send-horizonal"></i>
+                    </button>
+                </div>
+                <div class="input-utilities">
+                    <button id="stopBtn" class="stop-btn">
+                        <i data-lucide="square"></i> Stop Generation
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="code-panel hidden" id="codePanel">
+            <div class="panel-header">
+                <h3>Execution Engine</h3>
+                <button id="toggleCodePanel" class="icon-btn">
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </div>
+            <div id="codeOutput" class="code-output"></div>
+        </aside>
+    </div>
+
+        <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content glass-panel settings-large">
+            <div class="modal-header">
+                <h2><i data-lucide="sliders-horizontal"></i> Berry Control Center</h2>
+                <span class="close-btn" id="closeSettings"><i data-lucide="x"></i></span>
+            </div>
+            <div class="settings-layout">
+                <div class="settings-sidebar">
+                    <ul id="settingsTabs">
+                        <li class="active" data-tab="general">General</li>
+                        <li data-tab="security">Permissions &amp; Security</li>
+                        <li data-tab="ai">AI / Model</li>
+                        <li data-tab="voice">Voice</li>
+                        <li data-tab="ui">UI / Interface</li>
+                        <li data-tab="hotkeys">Hotkeys</li>
+                        <li data-tab="apps">Apps &amp; Process Control</li>
+                        <li data-tab="fs">File System</li>
+                        <li data-tab="memory">Memory &amp; Context</li>
+                        <li data-tab="automation">Automation</li>
+                        <li data-tab="plugins">Plugins / Tools</li>
+                        <li data-tab="performance">Performance</li>
+                        <li data-tab="logs">Logs &amp; Analytics</li>
+                        <li data-tab="updates">Updates</li>
+                        <li data-tab="developer">Developer</li>
+                    </ul>
+                </div>
+                
+                <div class="settings-content-area" id="settingsContentArea">
+                    <div class="settings-tab-pane active" id="tab-general">
+                        <h3>General</h3>
+                        <div class="form-group">
+                            <label>Language</label>
+                            <select id="language" class="form-control">
+                                <option value="en-US">English (US)</option>
+                                <option value="en-UK">English (UK)</option>
+                                <option value="es-ES">Spanish</option>
+                                <option value="fr-FR">French</option>
+                                <option value="de-DE">German</option>
+                                <option value="ja-JP">Japanese</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Region</label>
+                            <select id="region" class="form-control">
+                                <option value="US">United States</option>
+                                <option value="EU">Europe</option>
+                                <option value="Asia">Asia</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Time Format</label>
+                            <select id="time_format" class="form-control">
+                                <option value="24h">24-Hour</option>
+                                <option value="12h">12-Hour (AM/PM)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Startup Behavior</label>
+                            <select id="startup_behavior" class="form-control">
+                                <option value="normal">Normal (Foreground)</option>
+                                <option value="tray">Minimize to System Tray</option>
+                                <option value="hidden">Hidden Daemon</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Default Mode</label>
+                            <select id="default_mode" class="form-control">
+                                <option value="assist">Assistant (Safe)</option>
+                                <option value="operator">Operator (Action Bias)</option>
+                                <option value="root">Root (Unrestricted)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reset Settings to Default</label>
+                            <button type="button" class="btn" style="background:var(--error-color);color:white;width:100%">Reset All</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-security">
+                        <h3>Permissions & Security</h3>
+                        <div class="form-group">
+                            <label>Current Permission Mode</label>
+                            <select id="permission_mode" class="form-control">
+                                <option value="strict">Strict (Ask everything)</option>
+                                <option value="smart">Smart (Ask on destructive)</option>
+                                <option value="auto">Auto-run (Root)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Confirmation Behavior</label>
+                            <select id="confirmation_behavior" class="form-control">
+                                <option value="always">Always Confirm</option>
+                                <option value="smart">Smart Confirm</option>
+                                <option value="never">Never (Auto-run)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Critical Process Protection</label><input type="checkbox" id="process_protection" checked></div>
+                        <div class="form-group"><label>Sandbox / Safe Mode</label><input type="checkbox" id="sandbox_mode"></div>
+                        <div class="form-group"><label>Blocked Directories (Comma separated)</label><input type="text" id="blocked_directories" class="form-control" value="/etc,/bin,C:/Windows"></div>
+                        <div class="form-group"><label>Trusted Actions (Comma separated)</label><input type="text" id="trusted_actions" class="form-control" value="python,ls,dir"></div>
+                        <div class="form-group"><label>Session Timeout (mins)</label><input type="number" id="session_timeout" class="form-control" value="60"></div>
+                        <div class="form-group"><label>Audit Logs Viewer</label><button type="button" class="btn">View Logs</button></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-ai">
+                        <h3>AI / Model</h3>
+                        <div class="form-group">
+                            <label for="modelSelect">Model</label>
+                            <select id="modelSelect" name="model" class="form-control">
+                                <optgroup label="Google">
+                                    <option value="gemini/gemini-2.5-flash">Gemini 2.5 Flash</option>
+                                    <option value="gemini/gemini-3-pro-preview">Gemini 3 Pro Preview</option>
+                                </optgroup>
+                                <optgroup label="OpenAI">
+                                    <option value="gpt-4o">GPT-4o</option>
+                                    <option value="gpt-4o-mini" selected>GPT-4o Mini</option>
+                                </optgroup>
+                                <optgroup label="Anthropic">
+                                    <option value="claude-3-5-sonnet-latest">Claude 3.5 Sonnet</option>
+                                </optgroup>
+                                <optgroup label="Meta / Local">
+                                    <option value="ollama/llama3.2">Llama 3.2 (Ollama)</option>
+                                    <option value="ollama/llama3.1">Llama 3.1 (Ollama)</option>
+                                    <option value="ollama/qwen2.5-coder:7b">Qwen 2.5 Coder 7B (Ollama)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="apiKey">API Key</label>
+                            <input type="password" id="apiKey" name="api_key" class="form-control" placeholder="sk-...">
+                        </div>
+                        <div class="form-group">
+                            <label>Backend Selection</label>
+                            <select id="backend_selection" class="form-control">
+                                <option value="auto">Auto-Detect</option>
+                                <option value="local">Local Hardware Only</option>
+                                <option value="cloud">Cloud API Only</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Temperature</label><input type="range" id="temperature" min="0" max="1" step="0.1" value="0.2"></div>
+                        <div class="form-group"><label>Max Tokens</label><input type="number" id="maxTokens" class="form-control" value="2000"></div>
+                        <div class="form-group"><label>Timeout</label><input type="number" id="timeout" class="form-control" value="60"></div>
+                        <div class="form-group"><label>Retry Attempts</label><input type="number" id="retryAttempts" class="form-control" value="3"></div>
+                        <div class="form-group"><label>Structured Output Enforcement</label><input type="checkbox" id="structured_output" checked></div>
+                        <div class="form-group"><label>Fallback Behavior</label><input type="checkbox" id="fallback_behavior" checked></div>
+                        <div class="form-group">
+                            <label for="customInstructions">System Prompt Editor</label>
+                            <textarea id="customInstructions" class="form-control" rows="5" placeholder="You are Berry..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="contextWindow">Context Length Limit</label>
+                            <input type="number" id="contextWindow" class="form-control" placeholder="8000">
+                        </div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-voice">
+                        <h3>Voice</h3>
+                        <div class="form-group">
+                            <label>Microphone Selection</label>
+                            <select id="mic_selection" class="form-control">
+                                <option value="default">System Default</option>
+                                <option value="usb">USB Microphone</option>
+                                <option value="virtual">Virtual Audio Cable</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Wake Word Enable</label><input type="checkbox" id="wake_word_enable" checked></div>
+                        <div class="form-group"><label>Wake Word Phrase</label><input type="text" id="wake_word_phrase" class="form-control" value="Berry"></div>
+                        <div class="form-group"><label>Voice Activation Sensitivity</label><input type="range" id="voice_sensitivity" min="1" max="10" value="5"></div>
+                        <div class="form-group">
+                            <label>Speech-to-Text Model</label>
+                            <select id="stt_model" class="form-control">
+                                <option value="browser">Browser Native</option>
+                                <option value="whisper">OpenAI Whisper (Local)</option>
+                                <option value="cloud">Cloud API</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Text-to-Speech Voice</label>
+                            <select id="tts_voice" class="form-control">
+                                <option value="default">System Default</option>
+                                <option value="elevenlabs">ElevenLabs (Premium)</option>
+                                <option value="coqui">Coqui TTS (Local)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Response Playback</label><input type="checkbox" id="response_playback"></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-ui">
+                        <h3>UI / Interface</h3>
+                        <div class="form-group">
+                            <label>Theme</label>
+                            <select id="theme" class="form-control">
+                                <option value="system">System Auto</option>
+                                <option value="dark">Dark Mode</option>
+                                <option value="light">Light Mode</option>
+                                <option value="hacker">Hacker Green</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Accent Color</label><input type="color" id="accent_color" value="#ffffff"></div>
+                        <div class="form-group">
+                            <label for="fontSize">Font Size</label>
+                            <select id="fontSize" name="fontSize" class="form-control">
+                                <option value="12px">Extra Small (12px)</option>
+                                <option value="14px">Small (14px)</option>
+                                <option value="16px" selected>Medium (16px)</option>
+                                <option value="18px">Large (18px)</option>
+                                <option value="22px">Extra Large (22px)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>UI Density</label>
+                            <select id="ui_density" class="form-control">
+                                <option value="comfortable">Comfortable</option>
+                                <option value="compact">Compact (Dev Mode)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Animations</label><input type="checkbox" id="ui_animations" checked></div>
+                        <div class="form-group"><label>Overlay Hotkey</label><input type="text" id="overlay_hotkey" class="form-control" value="Ctrl+Space"></div>
+                        <div class="form-group"><label>Transparency</label><input type="range" id="transparency" min="0" max="100" value="90"></div>
+                        <div class="form-group">
+                            <label>Notification Style</label>
+                            <select id="notification_style" class="form-control">
+                                <option value="toast">Toast Notifications</option>
+                                <option value="modal">Blocking Modals</option>
+                                <option value="silent">Silent (Log Only)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-hotkeys">
+                        <h3>Hotkeys</h3>
+                        <div class="form-group"><label>Global Activation Key</label><input type="text" id="hk_activation" class="form-control" value="Alt+Space"></div>
+                        <div class="form-group"><label>Quick Command Key</label><input type="text" id="hk_command" class="form-control" value="Ctrl+Shift+C"></div>
+                        <div class="form-group"><label>Cancel/Interrupt Key</label><input type="text" id="hk_cancel" class="form-control" value="Esc"></div>
+                        <div class="form-group"><label>Push-to-Talk Key</label><input type="text" id="hk_ptt" class="form-control" value="`"></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-apps">
+                        <h3>Apps & Process Control</h3>
+                        <div class="form-group"><label>App Alias Mappings</label><button class="btn" type="button">Manage Aliases</button></div>
+                        <div class="form-group">
+                            <label>Preferred Browser</label>
+                            <select id="preferred_browser" class="form-control">
+                                <option value="default">System Default</option>
+                                <option value="chrome">Google Chrome</option>
+                                <option value="firefox">Mozilla Firefox</option>
+                                <option value="edge">Microsoft Edge</option>
+                                <option value="safari">Apple Safari</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Process Matching Sensitivity</label>
+                            <select id="process_matching" class="form-control">
+                                <option value="strict">Strict (Exact Match)</option>
+                                <option value="fuzzy">Fuzzy (Partial Match)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kill Behavior</label>
+                            <select id="kill_behavior" class="form-control">
+                                <option value="graceful">Graceful (SIGTERM)</option>
+                                <option value="force">Force Kill (SIGKILL)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Allow Background Control</label><input type="checkbox" id="background_control" checked></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-fs">
+                        <h3>File System</h3>
+                        <div class="form-group">
+                            <label>Allowed Commands</label>
+                            <select id="allowed_commands" class="form-control">
+                                <option value="all">All Commands</option>
+                                <option value="safe">Safe Only (Read-Only)</option>
+                                <option value="none">No System Commands</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Max File Read Size (MB)</label><input type="number" id="max_file_read_size_mb" class="form-control" value="10"></div>
+                        <div class="form-group"><label>Default Save Location</label><input type="text" id="default_save_location" class="form-control" value="~/Downloads"></div>
+                        <div class="form-group"><label>Auto-open Files</label><input type="checkbox" id="auto_open_files" checked></div>
+                        <div class="form-group"><label>File Preview Length (lines)</label><input type="number" id="file_preview_length" class="form-control" value="500"></div>
+                        <div class="form-group"><label>Background Indexing</label><input type="checkbox" id="fs_indexing"></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-memory">
+                        <h3>Memory & Context</h3>
+                        <div class="form-group"><label>Memory Depth (Messages)</label><input type="number" id="memory_depth" class="form-control" value="100"></div>
+                        <div class="form-group"><label>Auto-Summarize Old Context</label><input type="checkbox" id="auto_summarize" checked></div>
+                        <div class="form-group">
+                            <label>Vector DB Provider</label>
+                            <select id="vector_db" class="form-control">
+                                <option value="chroma">ChromaDB (Local)</option>
+                                <option value="pinecone">Pinecone (Cloud)</option>
+                                <option value="memory">In-Memory (Fast)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Clear Memory</label><button type="button" class="btn">Wipe Memory</button></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-automation">
+                        <h3>Automation</h3>
+                        <div class="form-group"><label>Scheduled Tasks</label><button type="button" class="btn">Manage Schedules</button></div>
+                        <div class="form-group"><label>Auto-run on Boot</label><input type="checkbox" id="auto_run_boot"></div>
+                        <div class="form-group">
+                            <label>Macro Recording</label>
+                            <select id="macro_recording" class="form-control">
+                                <option value="off">Off</option>
+                                <option value="on">On (Save as Scripts)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-plugins">
+                        <h3>Plugins & Tools</h3>
+                        <div class="form-group"><label>Plugin Directory</label><input type="text" id="plugin_dir" class="form-control" value="~/.berry/plugins"></div>
+                        <div class="form-group"><label>Auto-Update Plugins</label><input type="checkbox" id="auto_update_plugins" checked></div>
+                        <div class="form-group"><label>Enabled Plugins</label><button type="button" class="btn">Manage Extensions</button></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-performance">
+                        <h3>Performance</h3>
+                        <div class="form-group">
+                            <label>CPU Usage Limit</label>
+                            <select id="cpu_usage_limit" class="form-control">
+                                <option value="unlimited">Unlimited (Max Performance)</option>
+                                <option value="75">75% (Balanced)</option>
+                                <option value="50">50% (Eco)</option>
+                                <option value="25">25% (Low Power)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Background Priority</label>
+                            <select id="background_priority" class="form-control">
+                                <option value="high">High</option>
+                                <option value="normal">Normal</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Cache Size Limit (GB)</label><input type="number" id="cache_size" class="form-control" value="5"></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-logs">
+                        <h3>Logs & Analytics</h3>
+                        <div class="form-group"><label>Audit Logs</label><input type="checkbox" id="audit_logs" checked></div>
+                        <div class="form-group"><label>Error Reporting (Opt-in)</label><input type="checkbox" id="error_reporting"></div>
+                        <div class="form-group">
+                            <label>Trace Level</label>
+                            <select id="trace_level" class="form-control">
+                                <option value="info">Info (Standard)</option>
+                                <option value="warn">Warnings Only</option>
+                                <option value="debug">Debug (Verbose)</option>
+                                <option value="error">Errors Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-updates">
+                        <h3>Updates</h3>
+                        <div class="form-group"><label>Check for Updates</label><button type="button" class="btn">Check Now</button></div>
+                        <div class="form-group"><label>Auto-Update</label><input type="checkbox" id="auto_update" checked></div>
+                        <div class="form-group"><label>Join Beta Channel</label><input type="checkbox" id="beta_channel"></div>
+                    </div>
+
+                    <div class="settings-tab-pane" id="tab-developer">
+                        <h3>Developer</h3>
+                        <div class="form-group"><label>Debug Mode</label><input type="checkbox" id="debug_mode"></div>
+                        <div class="form-group"><label>Raw JSON Context Viewer</label><button type="button" class="btn">Open Viewer</button></div>
+                        <div class="form-group"><label>Browser Dev Tools</label><button type="button" class="btn">Inspect Element</button></div>
+                    </div>
+                </div></div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveSettingsBtn" class="btn primary-btn">Save Active Settings</button>
+            </div>
+        </div>
+    </div>
+    <!-- Onboarding Modal -->
+    <div id="onboardingModal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2><i data-lucide="rocket"></i> Welcome to Berry</h2>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Choose how you want to run your AI assistant.</p>
+                <div class="onboarding-options">
+                    <div class="onboarding-card" id="btnSetupCloud">
+                        <h4>☁️ Cloud API (Fast & Easy)</h4>
+                        <p>Connect to powerful models from Google, OpenAI, or Anthropic using an API key.</p>
+                    </div>
+                    <div class="onboarding-card" id="btnSetupLocal">
+                        <h4>💻 Local Model (Free & Private)</h4>
+                        <p>Run models directly on your hardware using Ollama. No data leaves your machine.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local Setup Modal -->
+    <div id="localSetupModal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2><i data-lucide="cpu"></i> Local Setup</h2>
+                <span class="close-btn" id="closeLocalSetup"><i data-lucide="x"></i></span>
+            </div>
+            <div class="modal-body">
+                <ol style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 20px; line-height: 1.6;">
+                    <li>Download and install <a href="https://ollama.com/download" target="_blank" style="color: var(--text-primary);">Ollama</a>.</li>
+                    <li>Open your terminal and run the following command to download the recommended model:</li>
+                </ol>
+                <div style="background: var(--bg-color); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); font-family: monospace; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="color: var(--text-primary);">ollama run qwen2.5-coder:7b</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 13px;"><em>Note: If you are an advanced user, you can use any local model of your choice by specifying its Ollama tag later in the Settings menu.</em></p>
+                <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 13px;">Once it finishes downloading and says 'success', you can click complete.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="completeLocalSetupBtn" class="btn primary-btn">Complete Setup</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+</body>
+</html>

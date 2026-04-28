@@ -1,0 +1,61 @@
+import sys
+
+if "--os" in sys.argv:
+    from rich import print as rich_print
+    from rich.markdown import Markdown
+    from rich.rule import Rule
+
+    def print_markdown(message):
+        """
+        Display markdown message. Works with multiline strings with lots of indentation.
+        Will automatically make single line > tags beautiful.
+        """
+
+        for line in message.split("\n"):
+            line = line.strip()
+            if line == "":
+                print("")
+            elif line == "---":
+                rich_print(Rule(style="white"))
+            else:
+                try:
+                    rich_print(Markdown(line))
+                except UnicodeEncodeError as e:
+                    # Replace the problematic character or handle the error as needed
+                    print("Error displaying line:", line)
+
+        if "\n" not in message and message.startswith(">"):
+            # Aesthetic choice. For these tags, they need a space below them
+            print("")
+
+    # Unused imports removed
+
+
+    # Update checks disabled in Berry Edition
+
+
+    if "--voice" in sys.argv:
+        print("Coming soon...")
+    from .computer_use.loop import run_async_main
+
+    run_async_main()
+    exit()
+
+from .core.async_core import AsyncBerry
+from .core.computer.terminal.base_language import BaseLanguage
+from .core.core import Berry
+
+berry = Berry()
+computer = berry.computer
+
+#   ____                             
+#  |  _ \                            
+#  | |_) | ___ _ __ _ __ _   _ 
+#  |  _ < / _ \ '__| '__| | | |
+#  | |_) |  __/ |  | |  | |_| |
+#  |____/ \___|_|  |_|   \__, |
+#                         __/ |
+#                        |___/ 
+
+
+
