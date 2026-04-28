@@ -78,5 +78,5 @@ Berry is provided under the MIT License. Portions of the software utilize third-
 
 
 <p align="center">
-    Built with ❤️ by <a href="https://github.com/BerrF35">BerrF35</a>
+    Built with by <a href="https://github.com/BerrF35">BerrF35</a> with reference to open-interpreter's design
 </p>
